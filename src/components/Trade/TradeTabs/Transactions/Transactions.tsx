@@ -63,12 +63,12 @@ import { TransactionRow as TransactionRowStyled } from '../../../../styled/Compo
 import Spinner from '../../../Global/Spinner/Spinner';
 import NoTableData from '../NoTableData/NoTableData';
 // import TableRows from '../TableRows';
+import { fetchPoolUserChanges } from '../../../../ambient-utils/api/fetchPoolUserChanges';
+import { UserDataContext } from '../../../../contexts';
 import TableRowsInfiniteScroll from '../TableRowsInfiniteScroll';
 import { useSortedTxs } from '../useSortedTxs';
 import TransactionHeader from './TransactionsTable/TransactionHeader';
 import { TransactionRowPlaceholder } from './TransactionsTable/TransactionRowPlaceholder';
-import { fetchPoolUserChanges } from '../../../../ambient-utils/api/fetchPoolUserChanges';
-import { UserDataContext } from '../../../../contexts';
 
 interface propsIF {
     filter?: CandleDataIF | undefined;
@@ -259,8 +259,8 @@ function Transactions(props: propsIF) {
             });
         }
     }, [
-        transactionsByPool.changes,
-        userTransactionsByPool.changes,
+        transactionsByPool,
+        userTransactionsByPool,
         activeAccountTransactionData,
     ]);
 
@@ -370,13 +370,13 @@ function Transactions(props: propsIF) {
     }, [pagesVisible[0]]);
 
     const oldestTxTime = useMemo(() => {
-        const dataToFilter = fetchedTransactions.changes;
+        const dataToFilter = fetchedTransactionsRef.current?.changes || [];
         return dataToFilter.length > 0
             ? dataToFilter.reduce((min, transaction) => {
                   return transaction.txTime < min ? transaction.txTime : min;
               }, dataToFilter[0].txTime)
             : 0;
-    }, [fetchedTransactions.changes, showAllData, isAccountView]);
+    }, [fetchedTransactions, showAllData, isAccountView]);
 
     const oldestTxTimeRef = useRef<number>(oldestTxTime);
     oldestTxTimeRef.current = oldestTxTime;
@@ -807,6 +807,7 @@ function Transactions(props: propsIF) {
             setDebouncedIsLoading(isLoading);
         }
     }, [isLoading, txDataToDisplay.length]);
+
     const shouldDisplayNoTableData: boolean =
         !debouncedIsLoading &&
         !txDataToDisplay.length &&
