@@ -1,4 +1,4 @@
-import { CandleDataIF } from './CandleDataIF';
+import { CandleDataChart } from '../../../pages/platformAmbient/Chart/ChartUtils/chartUtils';
 
 export interface CandlesByPoolAndDurationIF {
     pool: {
@@ -8,5 +8,5 @@ export interface CandlesByPoolAndDurationIF {
         chainId: string;
     };
     duration: number;
-    candles: Array<CandleDataIF>;
+    candles: Array<CandleDataChart>;
 }

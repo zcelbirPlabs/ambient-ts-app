@@ -1408,88 +1408,88 @@ export default function Chart(props: propsIF) {
         }
     }, [liqMode, shouldResetBuffer]);
 
-    useEffect(() => {
-        (async () => {
-            if (scaleData && timeGaps.length > 0) {
-                const canvas = d3
-                    .select(d3CanvasMain.current)
-                    .select('canvas')
-                    .node() as HTMLCanvasElement;
+    // useEffect(() => {
+    //     (async () => {
+    //         if (scaleData && timeGaps.length > 0) {
+    //             const canvas = d3
+    //                 .select(d3CanvasMain.current)
+    //                 .select('canvas')
+    //                 .node() as HTMLCanvasElement;
 
-                const rectCanvas = canvas.getBoundingClientRect();
-                const width = rectCanvas.width;
+    //             const rectCanvas = canvas.getBoundingClientRect();
+    //             const width = rectCanvas.width;
 
-                scaleData.xScale.range([0, width]);
-                scaleData.drawingLinearxScale.range([0, width]);
+    //             scaleData.xScale.range([0, width]);
+    //             scaleData.drawingLinearxScale.range([0, width]);
 
-                const lastDateArray = timeGaps
-                    .sort((a, b) => b.range[1] - a.range[1])
-                    .filter((i) => i.isAddedPixel);
-                let lastDate: undefined | number = undefined;
-                if (lastDateArray.length > 0) {
-                    lastDate = lastDateArray[0].range[1];
-                }
+    //             const lastDateArray = timeGaps
+    //                 .sort((a, b) => b.range[1] - a.range[1])
+    //                 .filter((i) => i.isAddedPixel);
+    //             let lastDate: undefined | number = undefined;
+    //             if (lastDateArray.length > 0) {
+    //                 lastDate = lastDateArray[0].range[1];
+    //             }
 
-                // To maintain the bandwidth of the candles, the domain is updated by the amount of shift.
-                // If new data comes from the left, the scale is shifted to the right for a smaller scale, and vice versa.
-                timeGaps
-                    .filter((i) => !i.isAddedPixel)
-                    .forEach((element: timeGapsValue) => {
-                        if (isCondensedModeEnabled) {
-                            const pix =
-                                scaleData.xScale(element.range[0]) -
-                                scaleData.xScale(element.range[1]);
+    //             // To maintain the bandwidth of the candles, the domain is updated by the amount of shift.
+    //             // If new data comes from the left, the scale is shifted to the right for a smaller scale, and vice versa.
+    //             timeGaps
+    //                 .filter((i) => !i.isAddedPixel)
+    //                 .forEach((element: timeGapsValue) => {
+    //                     if (isCondensedModeEnabled) {
+    //                         const pix =
+    //                             scaleData.xScale(element.range[0]) -
+    //                             scaleData.xScale(element.range[1]);
 
-                            // shift to right
-                            let min = scaleData.xScale.invert(pix);
-                            let maxDom = scaleData.xScale.domain()[1];
+    //                         // shift to right
+    //                         let min = scaleData.xScale.invert(pix);
+    //                         let maxDom = scaleData.xScale.domain()[1];
 
-                            const dom = scaleData?.xScale.domain();
-                            const check =
-                                element.range[1] < dom[1] &&
-                                element.range[1] > dom[0];
+    //                         const dom = scaleData?.xScale.domain();
+    //                         const check =
+    //                             element.range[1] < dom[1] &&
+    //                             element.range[1] > dom[0];
 
-                            if (check) {
-                                if (lastDate && lastDate < element.range[1]) {
-                                    min = scaleData.xScale.domain()[0];
-                                    // shift to left
-                                    maxDom = scaleData.xScale.invert(
-                                        scaleData.xScale.range()[1] - pix,
-                                    );
-                                }
-                                scaleData.xScale.domain([min, maxDom]);
+    //                         if (check) {
+    //                             if (lastDate && lastDate < element.range[1]) {
+    //                                 min = scaleData.xScale.domain()[0];
+    //                                 // shift to left
+    //                                 maxDom = scaleData.xScale.invert(
+    //                                     scaleData.xScale.range()[1] - pix,
+    //                                 );
+    //                             }
+    //                             scaleData.xScale.domain([min, maxDom]);
 
-                                element.isAddedPixel = true;
-                            }
-                        }
-                    });
-            }
-        })().then(() => {
-            if (scaleData) {
-                const data = isCondensedModeEnabled
-                    ? timeGaps
-                          .filter((element) => element.isAddedPixel)
-                          .map((i: timeGapsValue) => i.range)
-                    : [];
+    //                             element.isAddedPixel = true;
+    //                         }
+    //                     }
+    //                 });
+    //         }
+    //     })().then(() => {
+    //         if (scaleData) {
+    //             const data = isCondensedModeEnabled
+    //                 ? timeGaps
+    //                       .filter((element) => element.isAddedPixel)
+    //                       .map((i: timeGapsValue) => i.range)
+    //                 : [];
 
-                const newDiscontinuityProvider = d3fc.discontinuityRange(
-                    ...data,
-                );
+    //             const newDiscontinuityProvider = d3fc.discontinuityRange(
+    //                 ...data,
+    //             );
 
-                scaleData.xScale.discontinuityProvider(
-                    newDiscontinuityProvider,
-                );
+    //             scaleData.xScale.discontinuityProvider(
+    //                 newDiscontinuityProvider,
+    //             );
 
-                setVisibleDateForCandle(scaleData.xScale.domain()[1]);
-                changeScale(false);
-                render();
-            }
-        });
-    }, [
-        diffHashSig(timeGaps),
-        diffHashSigScaleData(scaleData, 'x'),
-        isCondensedModeEnabled,
-    ]);
+    //             setVisibleDateForCandle(scaleData.xScale.domain()[1]);
+    //             changeScale(false);
+    //             render();
+    //         }
+    //     });
+    // }, [
+    //     diffHashSig(timeGaps),
+    //     diffHashSigScaleData(scaleData, 'x'),
+    //     isCondensedModeEnabled,
+    // ]);
 
     useEffect(() => {
         updateDrawnShapeHistoryonLocalStorage();
@@ -1603,18 +1603,18 @@ export default function Chart(props: propsIF) {
         }
     }, [diffHashSigScaleData(scaleData, 'x')]);
 
-    useEffect(() => {
-        if (isCondensedModeEnabled) {
-            const isShowSelectedDate = filterCandleWithTransaction(
-                unparsedData.candles,
-                period,
-            ).find((i) => i.isShowData && i.time * 1000 === selectedDate);
-            if (!isShowSelectedDate) {
-                setSelectedDate(undefined);
-                props.setCurrentData(undefined);
-            }
-        }
-    }, [isCondensedModeEnabled]);
+    // useEffect(() => {
+    //     if (isCondensedModeEnabled) {
+    //         const isShowSelectedDate = filterCandleWithTransaction(
+    //             unparsedData.candles,
+    //             period,
+    //         ).find((i) => i.isShowData && i.time * 1000 === selectedDate);
+    //         if (!isShowSelectedDate) {
+    //             setSelectedDate(undefined);
+    //             props.setCurrentData(undefined);
+    //         }
+    //     }
+    // }, [isCondensedModeEnabled]);
 
     useEffect(() => {
         if (isChartZoom) {

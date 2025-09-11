@@ -275,6 +275,16 @@ export class Zoom {
 
         this.calculateDrawingDomains(deltaX, scaleData, false);
 
+        const [minIndex, maxIndex] = scaleData.indexScale.domain();
+        const domainWidth = maxIndex - minIndex;
+
+        const newMinIndex = scaleData.indexScale.invert(
+            scaleData.indexScale.range()[0] - deltaX,
+        );
+        const newMaxIndex = newMinIndex + domainWidth;
+
+        scaleData.indexScale.domain([newMinIndex, newMaxIndex]);
+
         scaleData?.xScale.domain([newMinDomain, newMaxDomain]);
     }
 

@@ -33,6 +33,8 @@ import { AppStateContext } from './AppStateContext';
 import { CachedDataContext } from './CachedDataContext';
 import { ChartContext } from './ChartContext';
 import { CrocEnvContext } from './CrocEnvContext';
+import { CandleDataChart } from '../pages/platformAmbient/Chart/ChartUtils/chartUtils';
+import { filterCandleWithTransaction } from '../pages/Chart/ChartUtils/discontinuityScaleUtils';
 export interface CandleContextIF {
     candleData: CandlesByPoolAndDurationIF | undefined;
     setCandleData: Dispatch<
@@ -56,6 +58,7 @@ export interface CandleContextIF {
     showFutaCandles: boolean;
     setShowFutaCandles: Dispatch<SetStateAction<boolean>>;
     setIsChartOpen: Dispatch<SetStateAction<boolean>>;
+    filteredCandleData: CandlesByPoolAndDurationIF | undefined;
 }
 
 export const CandleContext = createContext({} as CandleContextIF);
@@ -108,7 +111,7 @@ export const CandleContextProvider = (props: { children: React.ReactNode }) => {
         number | undefined
     >();
 
-    const [isCondensedModeEnabled, setIsCondensedModeEnabled] = useState(true);
+    const [isCondensedModeEnabled, setIsCondensedModeEnabled] = useState(false);
     const [showFutaCandles, setShowFutaCandles] = useState(false);
 
     const [isFetchingCandle, setIsFetchingCandle] = useState(false);
@@ -171,6 +174,24 @@ export const CandleContextProvider = (props: { children: React.ReactNode }) => {
     const [isManualCandleFetchRequested, setIsManualCandleFetchRequested] =
         useState(false);
 
+    const filteredCandleData = useMemo(() => {
+        if (!candleData || !candleTimeLocal) return undefined;
+
+        const processed = filterCandleWithTransaction(
+            [...candleData.candles],
+            candleTimeLocal,
+        );
+
+        const withIndex = processed
+            .filter((c) => c.isShowData)
+            .map((c, index) => ({ ...c, index }));
+
+        return {
+            ...candleData,
+            candles: withIndex,
+        };
+    }, [candleData, candleTimeLocal]);
+
     const candleContext = {
         candleData,
         setCandleData,
@@ -191,6 +212,7 @@ export const CandleContextProvider = (props: { children: React.ReactNode }) => {
         showFutaCandles,
         setShowFutaCandles,
         setIsChartOpen,
+        filteredCandleData,
     };
 
     useEffect(() => {

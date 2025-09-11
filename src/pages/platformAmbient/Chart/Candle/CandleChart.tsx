@@ -129,25 +129,25 @@ export default function CandleChart(props: candlePropsIF) {
         if (scaleData !== undefined) {
             const canvasCandlestick = d3fc
                 .autoBandwidth(d3fc.seriesCanvasCandlestick())
-                .xScale(scaleData?.xScale)
+                .xScale(scaleData?.indexScale)
                 .yScale(scaleData?.yScale)
-                .crossValue((d: CandleDataIF) => d.time * 1000)
-                .highValue((d: CandleDataIF) =>
+                .crossValue((d: CandleDataChart) => d.index)
+                .highValue((d: CandleDataChart) =>
                     denomInBase
                         ? d.invMinPriceExclMEVDecimalCorrected
                         : d.maxPriceExclMEVDecimalCorrected,
                 )
-                .lowValue((d: CandleDataIF) =>
+                .lowValue((d: CandleDataChart) =>
                     denomInBase
                         ? d.invMaxPriceExclMEVDecimalCorrected
                         : d.minPriceExclMEVDecimalCorrected,
                 )
-                .openValue((d: CandleDataIF) =>
+                .openValue((d: CandleDataChart) =>
                     denomInBase
                         ? d.invPriceOpenExclMEVDecimalCorrected
                         : d.priceOpenExclMEVDecimalCorrected,
                 )
-                .closeValue((d: CandleDataIF) =>
+                .closeValue((d: CandleDataChart) =>
                     denomInBase
                         ? d.invPriceCloseExclMEVDecimalCorrected
                         : d.priceCloseExclMEVDecimalCorrected,
@@ -221,6 +221,17 @@ export default function CandleChart(props: candlePropsIF) {
                     }
                 })
                 .on('measure', (event: CustomEvent) => {
+                    console.log(
+                        'scaleData?.indexScale.',
+                        scaleData?.indexScale.range(),
+                    );
+
+                    console.log(
+                        'scaleData?.indexScale.DOM',
+                        scaleData?.indexScale.domain(),
+                    );
+
+                    scaleData?.indexScale.range([0, event.detail.width]);
                     scaleData?.xScale.range([0, event.detail.width]);
                     scaleData?.drawingLinearxScale.range([
                         0,

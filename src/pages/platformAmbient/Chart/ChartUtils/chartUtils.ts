@@ -88,6 +88,7 @@ export type selectedDrawnData = {
 
 export interface CandleDataChart extends CandleDataIF {
     isShowData: boolean;
+    index: number;
 }
 export type liquidityChartData = {
     liqAskData: LiquidityDataLocal[];
@@ -109,6 +110,8 @@ export type scaleData = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     priceRange: any;
     drawingLinearxScale: d3.ScaleLinear<number, number>;
+
+    indexScale: d3.ScaleLinear<number, number>;
 };
 
 export type crosshair = {
